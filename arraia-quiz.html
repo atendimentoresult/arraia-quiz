@@ -1008,7 +1008,7 @@ async function mostrarResultado() {
   const vencedor = Object.keys(pontos).reduce((a, b) => pontos[a] >= pontos[b] ? a : b);
   const r = resultados[vencedor];
 
-  await salvarResultado(nomeAtual, vencedor);
+  salvarResultado(nomeAtual, vencedor);
 
   const primeiroNome = nomeAtual.split(' ')[0];
   document.getElementById('res-saudacao').textContent = `${primeiroNome}, a sua barraca no Arraiá das Tecnologias é`;
@@ -1043,19 +1043,20 @@ function reiniciar() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* STORAGE — Google Sheets via GET */
-async function salvarResultado(nome, barraca) {
-  try {
+/* STORAGE — Google Sheets via imagem (sem CORS) */
+function salvarResultado(nome, barraca) {
+  return new Promise((resolve) => {
     const url = GS_URL + "?acao=salvar&nome=" + encodeURIComponent(nome) + "&barraca=" + encodeURIComponent(barraca);
-    await fetch(url, { method: "GET", mode: "no-cors" });
-  } catch (err) {
-    console.warn("Erro ao salvar no Sheets:", err);
-  }
+    const img = new Image();
+    img.onload = img.onerror = () => resolve();
+    img.src = url;
+    setTimeout(resolve, 3000);
+  });
 }
 
 async function carregarLista() {
   try {
-    const url = GS_URL + "?acao=listar";
+    const url = GS_URL + "?acao=listar&callback=cb" + Date.now();
     const res = await fetch(url);
     const json = await res.json();
     return json.status === "ok" ? json.dados : [];

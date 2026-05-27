@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arraiá das Tecnologias — Qual barraca é sua?</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde-escuro: #2D3A1E;
+    --bege: #F2E8D5;
+    --laranja: #C8622A;
+    --laranja-claro: #D4834A;
+    --terracota: #A03E1F;
+    --marrom: #6B3A1F;
+    --creme: #F7F0E3;
+    --texto: #2D3A1E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--creme);
+    color: var(--texto);
+    min-height: 100vh;
+  }
+
+  .estrela-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(200,98,42,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(160,62,31,0.08) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    text-align: center;
+    padding: 48px 0 40px;
+  }
+
+  .badge-arraia {
+    display: inline-block;
+    background: var(--laranja);
+    color: var(--creme);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 6vw, 44px);
+    font-weight: 700;
+    color: var(--verde-escuro);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .header h1 span { color: var(--laranja); }
+
+  .header p {
+    font-size: 16px;
+    color: var(--marrom);
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto 32px;
+  }
+
+  .ornamento {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--laranja-claro);
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .linha-ornamento {
+    width: 60px;
+    height: 1px;
+    background: var(--laranja-claro);
+    opacity: 0.4;
+  }
+
+  /* TELA NOME */
+  .tela-nome {
+    display: none;
+    animation: fadeSlide 0.4s ease;
+  }
+
+  .tela-nome.ativa { display: block; }
+
+  .card-nome {
+    background: #fff;
+    border: 1.5px solid rgba(107,58,31,0.12);
+    border-radius: 20px;
+    padding: 36px 32px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .card-nome h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--verde-escuro);
+    margin-bottom: 10px;
+  }
+
+  .card-nome p {
+    font-size: 15px;
+    color: var(--marrom);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .input-nome {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1.5px solid rgba(107,58,31,0.2);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    color: var(--texto);
+    background: var(--creme);
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 16px;
+  }
+
+  .input-nome:focus { border-color: var(--laranja); }
+  .input-nome::placeholder { color: rgba(107,58,31,0.4); }
+
+  .erro-nome {
+    color: var(--terracota);
+    font-size: 13px;
+    margin-top: -10px;
+    margin-bottom: 12px;
+    display: none;
+  }
+
+  /* PROGRESS */
+  .progress-wrap { margin-bottom: 32px; }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--marrom);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: rgba(107,58,31,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--laranja), var(--terracota));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  .card-pergunta {
+    background: #fff;
+    border: 1.5px solid rgba(107,58,31,0.12);
+    border-radius: 20px;
+    padding: 36px 32px;
+    margin-bottom: 16px;
+    animation: fadeSlide 0.4s ease;
+  }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .numero-pergunta {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--laranja);
+    margin-bottom: 12px;
+  }
+
+  .texto-pergunta {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 3.5vw, 22px);
+    font-weight: 400;
+    color: var(--verde-escuro);
+    line-height: 1.45;
+    margin-bottom: 28px;
+  }
+
+  .opcoes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .opcao {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1.5px solid rgba(107,58,31,0.15);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--creme);
+    text-align: left;
+    width: 100%;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .opcao:hover {
+    border-color: var(--laranja);
+    background: rgba(200,98,42,0.05);
+    transform: translateX(4px);
+  }
+
+  .opcao.selecionada {
+    border-color: var(--laranja);
+    background: rgba(200,98,42,0.08);
+  }
+
+  .letra-opcao {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    background: rgba(107,58,31,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--marrom);
+    transition: all 0.2s;
+  }
+
+  .opcao.selecionada .letra-opcao {
+    background: var(--laranja);
+    color: #fff;
+  }
+
+  .texto-opcao {
+    font-size: 15px;
+    color: var(--texto);
+    line-height: 1.5;
+    padding-top: 4px;
+  }
+
+  .btn-proximo {
+    width: 100%;
+    padding: 16px;
+    background: var(--verde-escuro);
+    color: var(--creme);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: none;
+    margin-top: 4px;
+  }
+
+  .btn-proximo:hover {
+    background: var(--laranja);
+    transform: translateY(-2px);
+  }
+
+  .btn-proximo.visivel {
+    display: block;
+    animation: fadeSlide 0.3s ease;
+  }
+
+  .resultado {
+    display: none;
+    text-align: center;
+    animation: fadeSlide 0.5s ease;
+  }
+
+  .resultado.ativo { display: block; }
+
+  .resultado-topo { padding: 48px 0 32px; }
+
+  .tag-resultado {
+    display: inline-block;
+    background: var(--laranja);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+
+  .resultado-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 6vw, 40px);
+    font-weight: 700;
+    color: var(--verde-escuro);
+    margin-bottom: 8px;
+  }
+
+  .resultado-subtitulo {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--laranja);
+    margin-bottom: 24px;
+  }
+
+  .card-resultado {
+    background: #fff;
+    border: 1.5px solid rgba(107,58,31,0.12);
+    border-radius: 20px;
+    padding: 36px 32px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .card-resultado .icone-barraca {
+    font-size: 40px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .card-resultado h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--verde-escuro);
+    margin-bottom: 12px;
+  }
+
+  .card-resultado p {
+    font-size: 15px;
+    color: var(--marrom);
+    line-height: 1.7;
+  }
+
+  .tecnologias-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .tech-badge {
+    background: rgba(200,98,42,0.1);
+    color: var(--terracota);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(200,98,42,0.2);
+  }
+
+  .cta-wrap {
+    background: var(--verde-escuro);
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .cta-wrap p {
+    color: rgba(242,232,213,0.8);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .cta-wrap h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--creme);
+    line-height: 1.4;
+  }
+
+  .btn-refazer {
+    background: transparent;
+    border: 1.5px solid rgba(107,58,31,0.2);
+    color: var(--marrom);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+  }
+
+  .btn-refazer:hover {
+    border-color: var(--laranja);
+    color: var(--laranja);
+  }
+
+  .bandeirinhas {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: -1px;
+  }
+
+  .quiz-wrap.escondido { display: none; }
+
+  /* ADMIN */
+  .tela-admin {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(45,58,30,0.92);
+    z-index: 100;
+    overflow-y: auto;
+    padding: 32px 16px 60px;
+  }
+
+  .tela-admin.ativa { display: block; }
+
+  .admin-inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .admin-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--creme);
+  }
+
+  .admin-header p {
+    font-size: 13px;
+    color: rgba(242,232,213,0.6);
+    margin-top: 4px;
+  }
+
+  .btn-fechar-admin {
+    background: rgba(242,232,213,0.1);
+    border: 1px solid rgba(242,232,213,0.2);
+    color: var(--creme);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-fechar-admin:hover { background: rgba(242,232,213,0.2); }
+
+  .admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: rgba(242,232,213,0.08);
+    border: 1px solid rgba(242,232,213,0.15);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-card .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--creme);
+    display: block;
+  }
+
+  .stat-card .stat-label {
+    font-size: 12px;
+    color: rgba(242,232,213,0.6);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .admin-tabela-wrap {
+    background: rgba(242,232,213,0.05);
+    border: 1px solid rgba(242,232,213,0.12);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .admin-tabela {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .admin-tabela th {
+    background: rgba(242,232,213,0.08);
+    color: rgba(242,232,213,0.7);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  .admin-tabela td {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--creme);
+    border-top: 1px solid rgba(242,232,213,0.06);
+  }
+
+  .admin-tabela tr:hover td { background: rgba(242,232,213,0.04); }
+
+  .badge-barraca {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .badge-firmeza { background: rgba(200,98,42,0.25); color: #E8A07A; }
+  .badge-contorno { background: rgba(45,58,30,0.5); color: #9DB87E; border: 1px solid rgba(157,184,126,0.3); }
+  .badge-qualidade { background: rgba(160,62,31,0.25); color: #D4834A; }
+
+  .admin-vazio {
+    text-align: center;
+    padding: 48px 16px;
+    color: rgba(242,232,213,0.4);
+    font-size: 15px;
+  }
+
+  .btn-limpar {
+    background: transparent;
+    border: 1px solid rgba(242,232,213,0.2);
+    color: rgba(242,232,213,0.5);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-limpar:hover { border-color: #E87070; color: #E87070; }
+
+  /* MODAL ADMIN LOGIN */
+  .modal-admin {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(45,58,30,0.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-admin.ativo { display: flex; }
+
+  .modal-box {
+    background: var(--creme);
+    border-radius: 20px;
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+  }
+
+  .modal-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--verde-escuro);
+    margin-bottom: 8px;
+  }
+
+  .modal-box p {
+    font-size: 14px;
+    color: var(--marrom);
+    margin-bottom: 24px;
+  }
+
+  .input-senha {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1.5px solid rgba(107,58,31,0.2);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    color: var(--texto);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 4px;
+  }
+
+  .input-senha:focus { border-color: var(--laranja); }
+
+  .erro-senha {
+    color: var(--terracota);
+    font-size: 13px;
+    margin-bottom: 12px;
+    display: none;
+  }
+
+  .btn-entrar-admin {
+    width: 100%;
+    padding: 14px;
+    background: var(--verde-escuro);
+    color: var(--creme);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 12px;
+  }
+
+  .btn-entrar-admin:hover { background: var(--laranja); }
+
+  .btn-cancelar-admin {
+    background: transparent;
+    border: none;
+    color: var(--marrom);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+
+
+  @media (max-width: 480px) {
+    .card-pergunta { padding: 24px 20px; }
+    .cta-wrap { padding: 24px 20px; }
+    .card-nome { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="estrela-bg"></div>
+
+<div class="container">
+
+  <svg class="bandeirinhas" viewBox="0 0 680 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <line x1="0" y1="8" x2="680" y2="8" stroke="#C8622A" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4"/>
+    <polygon points="30,8 44,8 37,26" fill="#C8622A" opacity="0.7"/>
+    <polygon points="60,8 74,8 67,26" fill="#2D3A1E" opacity="0.7"/>
+    <polygon points="90,8 104,8 97,26" fill="#A03E1F" opacity="0.7"/>
+    <polygon points="120,8 134,8 127,26" fill="#C8622A" opacity="0.7"/>
+    <polygon points="150,8 164,8 157,26" fill="#2D3A1E" opacity="0.7"/>
+    <polygon points="180,8 194,8 187,26" fill="#A03E1F" opacity="0.7"/>
+    <polygon points="210,8 224,8 217,26" fill="#C8622A" opacity="0.7"/>
+    <polygon points="240,8 254,8 247,26" fill="#2D3A1E" opacity="0.7"/>
+    <polygon points="270,8 284,8 277,26" fill="#A03E1F" opacity="0.7"/>
+    <polygon points="300,8 314,8 307,26" fill="#C8622A" opacity="0.7"/>
+    <polygon points="330,8 344,8 337,26" fill="#2D3A1E" opacity="0.7"/>
+    <polygon points="360,8 374,8 367,26" fill="#A03E1F" opacity="0.7"/>
+    <polygon points="390,8 404,8 397,26" fill="#C8622A" opacity="0.7"/>
+    <polygon points="420,8 434,8 427,26" fill="#2D3A1E" opacity="0.7"/>
+    <polygon points="450,8 464,8 457,26" fill="#A03E1F" opacity="0.7"/>
+    <polygon points="480,8 494,8 487,26" fill="#C8622A" opacity="0.7"/>
+    <polygon points="510,8 524,8 517,26" fill="#2D3A1E" opacity="0.7"/>
+    <polygon points="540,8 554,8 547,26" fill="#A03E1F" opacity="0.7"/>
+    <polygon points="570,8 584,8 577,26" fill="#C8622A" opacity="0.7"/>
+    <polygon points="600,8 614,8 607,26" fill="#2D3A1E" opacity="0.7"/>
+    <polygon points="630,8 644,8 637,26" fill="#A03E1F" opacity="0.7"/>
+    <polygon points="656,8 670,8 663,26" fill="#C8622A" opacity="0.7"/>
+  </svg>
+
+  <!-- TELA INÍCIO -->
+  <div class="header" id="tela-inicio">
+    <div class="badge-arraia">🌾 Arraiá das Tecnologias</div>
+    <h1>Qual barraca foi <span>feita pra você?</span></h1>
+    <p>Responda 6 perguntas rápidas e descubra qual tratamento combina com o que você mais quer transformar.</p>
+    <div class="ornamento">
+      <div class="linha-ornamento"></div>
+      <span>✦</span>
+      <div class="linha-ornamento"></div>
+    </div>
+    <button class="btn-proximo visivel" onclick="irParaNome()" style="margin-top: 24px; max-width: 320px; display: block; margin-left: auto; margin-right: auto;">
+      Começar o teste 🎯
+    </button>
+  </div>
+
+  <!-- TELA NOME -->
+  <div class="tela-nome" id="tela-nome">
+    <div class="card-nome">
+      <div style="font-size: 36px; margin-bottom: 16px;">🌾</div>
+      <h2>Como podemos te chamar?</h2>
+      <p>Informe seu nome para personalizar o seu resultado.</p>
+      <input type="text" class="input-nome" id="input-nome" placeholder="Seu nome completo" maxlength="60" />
+      <div class="erro-nome" id="erro-nome">Por favor, informe seu nome para continuar.</div>
+      <button class="btn-proximo visivel" onclick="confirmarNome()" style="max-width: 100%;">
+        Continuar →
+      </button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="quiz-wrap escondido" id="quiz-wrap">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="label-pergunta">Pergunta 1 de 6</span>
+        <span id="label-pct">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="card-pergunta" id="card-pergunta">
+      <div class="numero-pergunta" id="num-pergunta">Pergunta 1</div>
+      <div class="texto-pergunta" id="texto-pergunta"></div>
+      <div class="opcoes" id="opcoes"></div>
+    </div>
+
+    <button class="btn-proximo" id="btn-proximo" onclick="proxima()">
+      Próxima pergunta →
+    </button>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="resultado" id="tela-resultado">
+    <div class="resultado-topo">
+      <div class="tag-resultado">🎉 Seu resultado chegou</div>
+      <p style="font-size: 15px; color: var(--marrom); margin-bottom: 8px;" id="res-saudacao"></p>
+      <div class="resultado-titulo" id="res-titulo"></div>
+      <div class="resultado-subtitulo" id="res-subtitulo"></div>
+    </div>
+
+    <div class="card-resultado">
+      <span class="icone-barraca" id="res-icone"></span>
+      <h3 id="res-nome"></h3>
+      <p id="res-descricao"></p>
+      <div class="tecnologias-wrap" id="res-techs"></div>
+    </div>
+
+    <div class="cta-wrap">
+      <p>Próximo passo</p>
+      <h3>Converse com nossa equipe aqui na clínica e descubra tudo que você pode fazer 🌾</h3>
+    </div>
+
+    <button class="btn-refazer" onclick="reiniciar()">Refazer o teste</button>
+  </div>
+
+</div>
+
+
+
+<!-- BOTÃO ADMIN VISÍVEL -->
+<div style="text-align:center; padding: 24px 0 40px;">
+  <button onclick="abrirModalAdmin()" style="background:transparent; border: 1.5px solid rgba(107,58,31,0.25); color: rgba(107,58,31,0.5); font-family:'Nunito',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding: 10px 20px; border-radius:10px; cursor:pointer;">
+    Acesso da equipe
+  </button>
+</div>
+
+<!-- MODAL SENHA ADMIN -->
+<div class="modal-admin" id="modal-admin">
+  <div class="modal-box">
+    <div style="font-size: 32px; margin-bottom: 12px;">🔒</div>
+    <h3>Acesso restrito</h3>
+    <p>Digite a senha para acessar o painel da equipe.</p>
+    <input type="password" class="input-senha" id="input-senha" placeholder="••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter') entrarAdmin()" />
+    <div class="erro-senha" id="erro-senha">Senha incorreta. Tente novamente.</div>
+    <button class="btn-entrar-admin" onclick="entrarAdmin()">Entrar</button>
+    <button class="btn-cancelar-admin" onclick="fecharModalAdmin()">Cancelar</button>
+  </div>
+</div>
+
+<!-- PAINEL ADMIN -->
+<div class="tela-admin" id="tela-admin">
+  <div class="admin-inner">
+    <div class="admin-header">
+      <div>
+        <h2>Painel da equipe</h2>
+        <p>Arraiá das Tecnologias — resultados das pacientes</p>
+      </div>
+      <button class="btn-fechar-admin" onclick="fecharAdmin()">Fechar ✕</button>
+    </div>
+
+    <div class="admin-stats" id="admin-stats"></div>
+
+    <div class="admin-tabela-wrap">
+      <table class="admin-tabela" id="admin-tabela">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Resultado</th>
+            <th>Data e hora</th>
+          </tr>
+        </thead>
+        <tbody id="admin-tbody"></tbody>
+      </table>
+      <div class="admin-vazio" id="admin-vazio" style="display:none">
+        Nenhuma paciente realizou o teste ainda.
+      </div>
+    </div>
+
+    <button class="btn-limpar" onclick="limparDados()">Limpar todos os registros</button>
+  </div>
+</div>
+
+<script>
+const SENHA_ADMIN = "arraia2025";
+const GS_URL = "https://script.google.com/macros/s/AKfycbwk27nxQ5K8f8OhOSkmlGck2MmqgEQsUzM6DBMliTaWRLmUdvrJq-2m7EL7QauAa2vE/exec";
+
+window.addEventListener('hashchange', () => {
+  if (window.location.hash === '#admin') abrirModalAdmin();
+});
+
+window.addEventListener('load', () => {
+  if (window.location.hash === '#admin') abrirModalAdmin();
+});
+
+const perguntas = [
+  {
+    texto: "Quando você se olha no espelho, o que chama mais atenção primeiro?",
+    opcoes: [
+      { letra: "A", texto: "A pele não tem mais aquele brilho natural, parece apagada", barraca: "qualidade" },
+      { letra: "B", texto: "O rosto parece mais pesado, como se tivesse perdido o contorno de antes", barraca: "firmeza" },
+      { letra: "C", texto: "Algumas áreas do corpo que não respondem mais à academia", barraca: "contorno" }
+    ]
+  },
+  {
+    texto: "Qual dessas situações mais te incomoda no dia a dia?",
+    opcoes: [
+      { letra: "A", texto: "Olhar pro espelho de corpo inteiro e não gostar do que vê em certas regiões", barraca: "contorno" },
+      { letra: "B", texto: "Precisar de filtro ou maquiagem pra esconder algo que te incomoda na pele", barraca: "qualidade" },
+      { letra: "C", texto: "Sentir que a pele tá menos firme, com aquela sensação de \"caída\"", barraca: "firmeza" }
+    ]
+  },
+  {
+    texto: "Se você pudesse resolver uma coisa agora, qual seria?",
+    opcoes: [
+      { letra: "A", texto: "Recuperar a sustentação e firmeza que a pele tinha antes", barraca: "firmeza" },
+      { letra: "B", texto: "Ter uma pele mais uniforme, sem manchas e com textura mais lisa", barraca: "qualidade" },
+      { letra: "C", texto: "Definir e esculpir regiões que parecem resistentes a qualquer esforço", barraca: "contorno" }
+    ]
+  },
+  {
+    texto: "Como você descreveria sua maior queixa hoje?",
+    opcoes: [
+      { letra: "A", texto: "Gordura localizada ou falta de definição muscular", barraca: "contorno" },
+      { letra: "B", texto: "Flacidez no rosto, pescoço ou corpo", barraca: "firmeza" },
+      { letra: "C", texto: "Manchas, poros abertos, cicatrizes ou pele sem viço", barraca: "qualidade" }
+    ]
+  },
+  {
+    texto: "O que você mais quer sentir depois de um tratamento?",
+    opcoes: [
+      { letra: "A", texto: "Olhar pra pele e ver ela limpa, iluminada e renovada", barraca: "qualidade" },
+      { letra: "B", texto: "Sentir o corpo mais definido e proporcional", barraca: "contorno" },
+      { letra: "C", texto: "Ver o rosto e o corpo mais firmes, com aspecto rejuvenescido", barraca: "firmeza" }
+    ]
+  },
+  {
+    texto: "Uma amiga pergunta o que você quer tratar. Você responde:",
+    opcoes: [
+      { letra: "A", texto: "\"Quero tratar a pele, clarear, melhorar a textura\"", barraca: "qualidade" },
+      { letra: "B", texto: "\"Quero levantar e firmar, tô sentindo que perdeu sustentação\"", barraca: "firmeza" },
+      { letra: "C", texto: "\"Quero definir, tem região do corpo que não muda com nada\"", barraca: "contorno" }
+    ]
+  }
+];
+
+const resultados = {
+  firmeza: {
+    titulo: "Barraca da Firmeza",
+    subtitulo: "Sustentação & Rejuvenescimento",
+    icone: "🌟",
+    descricao: "Sua pele pede sustentação e renovação. A Barraca da Firmeza reúne as tecnologias certas pra tratar flacidez e devolver aquela sensação de pele mais jovem e estruturada — no rosto e no corpo.",
+    techs: ["Coolfase", "Ultraformer MPT", "Liftera Black", "Exion"]
+  },
+  contorno: {
+    titulo: "Barraca do Contorno",
+    subtitulo: "Definição & Escultura Corporal",
+    icone: "✨",
+    descricao: "Seu foco é definição. A Barraca do Contorno foi pensada pra quem quer esculpir, reduzir gordura localizada e ganhar proporção — com tecnologia que vai além do que a academia consegue entregar.",
+    techs: ["EmSculpt Neo", "Exion", "Ultraformer MPT"]
+  },
+  qualidade: {
+    titulo: "Barraca da Qualidade de Pele",
+    subtitulo: "Clareza, Textura & Glow",
+    icone: "🌺",
+    descricao: "Sua pele quer clareza, textura e viço. A Barraca da Qualidade de Pele reúne os melhores lasers e protocolos pra tratar manchas, cicatrizes e devolver o brilho natural que você sente falta.",
+    techs: ["Laser CO2", "Fotona"]
+  }
+};
+
+let atual = 0;
+let pontos = { firmeza: 0, contorno: 0, qualidade: 0 };
+let selecionada = null;
+let nomeAtual = "";
+
+function irParaNome() {
+  document.getElementById('tela-inicio').style.display = 'none';
+  document.getElementById('tela-nome').classList.add('ativa');
+  setTimeout(() => document.getElementById('input-nome').focus(), 300);
+}
+
+function confirmarNome() {
+  const nome = document.getElementById('input-nome').value.trim();
+  if (!nome) {
+    document.getElementById('erro-nome').style.display = 'block';
+    return;
+  }
+  document.getElementById('erro-nome').style.display = 'none';
+  nomeAtual = nome;
+  document.getElementById('tela-nome').classList.remove('ativa');
+  document.getElementById('quiz-wrap').classList.remove('escondido');
+  renderPergunta();
+}
+
+function renderPergunta() {
+  const p = perguntas[atual];
+  selecionada = null;
+
+  document.getElementById('num-pergunta').textContent = `Pergunta ${atual + 1}`;
+  document.getElementById('label-pergunta').textContent = `Pergunta ${atual + 1} de ${perguntas.length}`;
+  const pct = Math.round((atual / perguntas.length) * 100);
+  document.getElementById('label-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('texto-pergunta').textContent = p.texto;
+
+  const cont = document.getElementById('opcoes');
+  cont.innerHTML = '';
+  p.opcoes.forEach((op, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opcao';
+    btn.innerHTML = `<span class="letra-opcao">${op.letra}</span><span class="texto-opcao">${op.texto}</span>`;
+    btn.onclick = () => selecionar(i, op.barraca, btn);
+    cont.appendChild(btn);
+  });
+
+  document.getElementById('btn-proximo').classList.remove('visivel');
+
+  const card = document.getElementById('card-pergunta');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'fadeSlide 0.4s ease';
+}
+
+function selecionar(idx, barraca, btnEl) {
+  document.querySelectorAll('.opcao').forEach(b => b.classList.remove('selecionada'));
+  btnEl.classList.add('selecionada');
+  selecionada = barraca;
+  document.getElementById('btn-proximo').classList.add('visivel');
+  const isUltima = atual === perguntas.length - 1;
+  document.getElementById('btn-proximo').textContent = isUltima ? 'Ver meu resultado 🎉' : 'Próxima pergunta →';
+}
+
+function proxima() {
+  if (!selecionada) return;
+  pontos[selecionada]++;
+  atual++;
+  if (atual >= perguntas.length) {
+    mostrarResultado();
+  } else {
+    renderPergunta();
+  }
+}
+
+async function mostrarResultado() {
+  document.getElementById('quiz-wrap').classList.add('escondido');
+
+  const vencedor = Object.keys(pontos).reduce((a, b) => pontos[a] >= pontos[b] ? a : b);
+  const r = resultados[vencedor];
+
+  await salvarResultado(nomeAtual, vencedor);
+
+  const primeiroNome = nomeAtual.split(' ')[0];
+  document.getElementById('res-saudacao').textContent = `${primeiroNome}, a sua barraca no Arraiá das Tecnologias é`;
+  document.getElementById('res-titulo').textContent = r.titulo;
+  document.getElementById('res-subtitulo').textContent = r.subtitulo;
+  document.getElementById('res-icone').textContent = r.icone;
+  document.getElementById('res-nome').textContent = r.titulo;
+  document.getElementById('res-descricao').textContent = r.descricao;
+
+  const techsWrap = document.getElementById('res-techs');
+  techsWrap.innerHTML = '';
+  r.techs.forEach(t => {
+    const span = document.createElement('span');
+    span.className = 'tech-badge';
+    span.textContent = t;
+    techsWrap.appendChild(span);
+  });
+
+  const tela = document.getElementById('tela-resultado');
+  tela.classList.add('ativo');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function reiniciar() {
+  atual = 0;
+  pontos = { firmeza: 0, contorno: 0, qualidade: 0 };
+  selecionada = null;
+  nomeAtual = "";
+  document.getElementById('input-nome').value = '';
+  document.getElementById('tela-resultado').classList.remove('ativo');
+  document.getElementById('tela-inicio').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* STORAGE — Google Sheets */
+async function salvarResultado(nome, barraca) {
+  try {
+    await fetch(GS_URL, {
+      method: "POST",
+      body: JSON.stringify({ nome, barraca }),
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (err) {
+    console.warn("Erro ao salvar no Sheets:", err);
+  }
+}
+
+async function carregarLista() {
+  try {
+    const res = await fetch(GS_URL);
+    const json = await res.json();
+    return json.status === "ok" ? json.dados : [];
+  } catch {
+    return [];
+  }
+}
+
+/* ADMIN */
+function abrirModalAdmin() {
+  document.getElementById('input-senha').value = '';
+  document.getElementById('erro-senha').style.display = 'none';
+  document.getElementById('modal-admin').classList.add('ativo');
+  setTimeout(() => document.getElementById('input-senha').focus(), 200);
+}
+
+function fecharModalAdmin() {
+  document.getElementById('modal-admin').classList.remove('ativo');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+function entrarAdmin() {
+  const senha = document.getElementById('input-senha').value;
+  if (senha === SENHA_ADMIN) {
+    fecharModalAdmin();
+    abrirAdmin();
+  } else {
+    document.getElementById('erro-senha').style.display = 'block';
+    document.getElementById('input-senha').value = '';
+    document.getElementById('input-senha').focus();
+  }
+}
+
+async function abrirAdmin() {
+  document.getElementById('admin-vazio').textContent = 'Carregando...';
+  document.getElementById('admin-vazio').style.display = 'block';
+  document.getElementById('admin-tabela').style.display = 'none';
+  document.getElementById('tela-admin').classList.add('ativa');
+  const lista = await carregarLista();
+  const total = lista.length;
+  const contFirmeza = lista.filter(i => i.barraca === 'firmeza').length;
+  const contContorno = lista.filter(i => i.barraca === 'contorno').length;
+  const contQualidade = lista.filter(i => i.barraca === 'qualidade').length;
+
+  document.getElementById('admin-stats').innerHTML = `
+    <div class="stat-card">
+      <span class="stat-num">${total}</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">${contFirmeza}</span>
+      <span class="stat-label">Firmeza</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">${contContorno}</span>
+      <span class="stat-label">Contorno</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">${contQualidade}</span>
+      <span class="stat-label">Qualidade</span>
+    </div>
+  `;
+
+  const tbody = document.getElementById('admin-tbody');
+  tbody.innerHTML = '';
+
+  if (total === 0) {
+    document.getElementById('admin-tabela').style.display = 'none';
+    document.getElementById('admin-vazio').style.display = 'block';
+  } else {
+    document.getElementById('admin-tabela').style.display = 'table';
+    document.getElementById('admin-vazio').style.display = 'none';
+      const nomes = { firmeza: 'Firmeza', contorno: 'Contorno', qualidade: 'Qualidade de Pele' };
+    lista.slice().reverse().forEach((item, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="color:rgba(242,232,213,0.4); font-size:12px">${total - i}</td>
+        <td>${item.nome || item.nome}</td>
+        <td><span class="badge-barraca badge-${item.barraca}">${nomes[item.barraca] || item.barraca_nome || item.barraca}</span></td>
+        <td style="font-size:12px; color:rgba(242,232,213,0.5)">${item.hora}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('tela-admin').classList.add('ativa');
+}
+
+function fecharAdmin() {
+  document.getElementById('tela-admin').classList.remove('ativa');
+  history.replaceState(null, '', window.location.pathname);
+}
+
+async function limparDados() {
+  alert('Para apagar os registros, acesse diretamente a planilha do Google Sheets e limpe as linhas manualmente.');
+}
+</script>
+
+</body>
+</html>

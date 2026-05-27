@@ -1043,14 +1043,11 @@ function reiniciar() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* STORAGE — Google Sheets */
+/* STORAGE — Google Sheets via GET */
 async function salvarResultado(nome, barraca) {
   try {
-    await fetch(GS_URL, {
-      method: "POST",
-      body: JSON.stringify({ nome, barraca }),
-      headers: { "Content-Type": "application/json" }
-    });
+    const url = GS_URL + "?acao=salvar&nome=" + encodeURIComponent(nome) + "&barraca=" + encodeURIComponent(barraca);
+    await fetch(url, { method: "GET", mode: "no-cors" });
   } catch (err) {
     console.warn("Erro ao salvar no Sheets:", err);
   }
@@ -1058,7 +1055,8 @@ async function salvarResultado(nome, barraca) {
 
 async function carregarLista() {
   try {
-    const res = await fetch(GS_URL);
+    const url = GS_URL + "?acao=listar";
+    const res = await fetch(url);
     const json = await res.json();
     return json.status === "ok" ? json.dados : [];
   } catch {
